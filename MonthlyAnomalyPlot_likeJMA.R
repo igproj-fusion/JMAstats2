@@ -24,6 +24,7 @@ round2 = function(x, d=0) {
   return((x * p * 2 + 1) %/% 2 / p)
 }
 
+
 ########################################
 # GitHubからデータを読み込み
 # 月毎の平均気温を算出
@@ -112,8 +113,8 @@ ggplot(ANOM |> filter(Month == MONTH), aes(Year, Anomaly)) +
   guides(x = guide_axis(minor.ticks = F, cap = "both"),
          y = guide_axis(minor.ticks = TRUE, cap = "both")) +
   scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2024)) +
-  annotate("text", x = 1912, y = 3.5, 
-           label = paste("Trend＝", Trend$coef[MONTH], "(°C/100years)"), 
+  annotate("text", x = 1915, y = 3.5, 
+           label = paste("Trend ＝", Trend$coef[MONTH], "(°C/100years)"), 
            color = "gray90", size = 4.5) +
   ylim(c(-4, 4)) +
   theme_hc(style = "darkunica") +
