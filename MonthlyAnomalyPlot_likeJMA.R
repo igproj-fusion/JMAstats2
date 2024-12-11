@@ -19,8 +19,8 @@ pacman::p_load(
 # 四捨五入関数定義
 ########################################
 
-round2 = function(x, d=0) {
-  p = 10^d
+round2 = function(x, d = 0) {
+  p = 10 ^ d
   return((x * p * 2 + 1) %/% 2 / p)
 }
 
@@ -47,6 +47,7 @@ STATION <- c("47409", "47420", "47421", "47588", "47592",
 df.org <- set_names(RDS.github) |>
   map(\(RDS) {
     readRDS(url(RDS, method = "libcurl")) |> 
+      filter(block_no %in% STATION & year(date) >= 1898) |> 
       unnest(temperature) |> 
       clean_names() |> 
       mutate(Year = year(date),
@@ -54,9 +55,9 @@ df.org <- set_names(RDS.github) |>
       group_by(block_no, Year, Month) |> 
       summarize(Average = mean(average_c, na.rm = TRUE))
   }) |> 
-  bind_rows() |> 
-  filter(block_no %in% STATION) |> 
-  filter(Year >= 1898)
+  bind_rows() 
+   
+closeAllConnections()
 
 
 ########################################
@@ -80,7 +81,7 @@ ANOM <- df.org |>
   group_by(Year, Month) |> 
   summarize(Anomaly = mean(diff, na.rm = TRUE)) |>  
   group_by(Month) |> 
-  mutate(mavg5 = slide_vec(Anomaly, .f = mean, .before = 4))  |> 
+  mutate(mavg5 = slide_vec(Anomaly, .f = mean, .before = 4)) |> 
   mutate(mavg5 = lead(mavg5, 2)) |> 
   mutate(mavg5 = ifelse(Year < 1890, NA, mavg5))
   
@@ -106,11 +107,9 @@ ggplot(ANOM |> filter(Month == MONTH), aes(Year, Anomaly)) +
   geom_hline(yintercept = 0, color = "gray95") +
   geom_line(color = "gray80", linewidth = 0.5) +
   geom_point(color = "gray80", size = 2.2) +
-  geom_line(aes(Year, mavg5),
-            color = "lightblue", linewidth = 1.0) +
-  geom_smooth(method = lm, se = FALSE,
-              color = "red") +
-  guides(x = guide_axis(minor.ticks = F, cap = "both"),
+  geom_line(aes(Year, mavg5), color = "lightblue", linewidth = 1.0) +
+  geom_smooth(method = lm, se = FALSE, color = "red") +
+  guides(x = guide_axis(minor.ticks = FALSE, cap = "both"),
          y = guide_axis(minor.ticks = TRUE, cap = "both")) +
   scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2024)) +
   annotate("text", x = 1915, y = 3.5, 
