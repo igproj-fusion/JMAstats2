@@ -52,7 +52,7 @@ df.org <- set_names(RDS.github) |>
       clean_names() |> 
       mutate(Year = year(date),
              Month = month(date)) |>
-      filter(Year >= 1898 & Year <= 2023) |> 
+      filter(Year >= 1898 & Year <= 2024) |> 
       group_by(block_no, Year) |> 
       summarize(Average = mean(average_c, na.rm = TRUE),
                 Average.max = mean(max_c, na.rm = TRUE),
@@ -127,7 +127,7 @@ ggplot(ANOM) +
               method = lm, se = FALSE, color = "red") +
   guides(x = guide_axis(minor.ticks = FALSE, cap = "both"),
          y = guide_axis(minor.ticks = TRUE, cap = "both")) +
-  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2023)) +
+  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2024)) +
   annotate("text", x = 1918, y = 1.75, 
            label = paste("Trend ＝", format(coef, nsmall = 2), "(°C/100years)"), 
            color = "gray90", size = 4.) +
@@ -153,7 +153,7 @@ ggplot(ANOM) +
               method = lm, se = FALSE, color = "red") +
   guides(x = guide_axis(minor.ticks = FALSE, cap = "both"),
          y = guide_axis(minor.ticks = TRUE, cap = "both")) +
-  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2023)) +
+  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2024)) +
   annotate("text", x = 1918, y = 1.75, 
            label = paste("Trend ＝", format(coef.max, nsmall = 2), "(°C/100years)"), 
            color = "gray90", size = 4.) +
@@ -179,7 +179,7 @@ ggplot(ANOM) +
               method = lm, se = FALSE, color = "red") +
   guides(x = guide_axis(minor.ticks = FALSE, cap = "both"),
          y = guide_axis(minor.ticks = TRUE, cap = "both")) +
-  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2023)) +
+  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2024)) +
   annotate("text", x = 1918, y = 1.75, 
            label = paste("Trend ＝", format(coef.min, nsmall = 2), "(°C/100years)"), 
            color = "gray90", size = 4.) +

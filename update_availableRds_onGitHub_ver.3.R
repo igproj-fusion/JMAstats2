@@ -4,10 +4,10 @@
 #
 # local Diskの"C:\Users\myaji\GitHub\JMAstats2\data\rds_update"
 # このフォルダの既存rdsファイルは削除される。
-# 先月分のデータが追加されたrdsファイルはここに保存される。
+# 先月分のデータが追加された新規rdsファイルがここに保存される。
 #
 # 更新が終了したら全データを確認した後、問題が無ければ
-# GitHub/JMAstats2とsyncさせる。
+# GitHub/JMAstats2にpushする。
 #
 ######################################################
 
