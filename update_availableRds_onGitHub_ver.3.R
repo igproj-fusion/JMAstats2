@@ -2,7 +2,7 @@
 #
 # 月が変わって更新するときは、
 #
-# local Diskの"C:\Users\myaji\GitHub\JMAstats2\data\rds_update"
+# local DiskのRprojectフォルダ配下の：JMAstats2/data/rds_update
 # このフォルダの既存rdsファイルは削除される。
 # 先月分のデータが追加された新規rdsファイルがここに保存される。
 #
