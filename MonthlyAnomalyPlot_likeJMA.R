@@ -100,7 +100,7 @@ Trend <- ANOM |>
 # 月を指定してプロット
 ########################################
 
-MONTH = 11
+MONTH = 12
 
 
 ggplot(ANOM |> filter(Month == MONTH), aes(Year, Anomaly)) +

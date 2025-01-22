@@ -2,7 +2,7 @@
 #
 # 月が変わって更新するときは、
 #
-# local DiskのRprojectフォルダ配下の：JMAstats2/data/rds_update
+# local DiskのRprojectフォルダ配下のJMAstats2/data/rds_update
 # このフォルダの既存rdsファイルは削除される。
 # 先月分のデータが追加された新規rdsファイルがここに保存される。
 #
@@ -35,18 +35,19 @@ GITHUB.raw = "https://raw.githubusercontent.com/igproj-fusion/"
 GITHUB.repo = "JMAstats2/main/data/rds_update/"
 
 
-Area.li <- read.csv(paste0(GITHUB.raw, "JMAstats/main/Area_list.csv"))
-
-
 RDS.github <- github_ls(repo = "https://github.com/igproj-fusion/JMAstats2", 
                         recursive = TRUE, quiet = FALSE) |> 
   filter(path == "./data/rds_update") |> 
-  mutate(name = paste0(GITHUB.raw, GITHUB.repo, name)) |> 
-  pull(name)
+  mutate(url = paste0(GITHUB.raw, GITHUB.repo, name)) |> 
+  select(name, url) |> 
+  separate(col = name,
+           into = c("h1", "area", "h2"),
+           sep = "_") |> 
+  select(area, url)
 
-YearMonth <- substr(RDS.github[1], 
-       str_length(RDS.github[1]) - 9, 
-       str_length(RDS.github[1]) - 4)
+YearMonth <- substr(RDS.github$url[1], 
+       str_length(RDS.github$url[1]) - 9, 
+       str_length(RDS.github$url[1]) - 4)
 
 Year <- as.numeric(substr(YearMonth, 1, 4))                      
 Month <- as.numeric(substr(YearMonth, 5, 6))
@@ -57,11 +58,13 @@ if(Month == 12){
 } else {
   Month <- Month + 1
 }
-
+Month <- formatC(Month, width = 2, flag = "0")
 
 for(i in 1:length(RDS.github)) {
   
-  df.org <- readRDS(url(RDS.github[i], method = "libcurl"))
+  df.org <- readRDS(url(RDS.github$url[i], method = "libcurl"))
+  
+  Area = RDS.github$area[i]
   
   BLOCK <- df.org |> 
     select(block_no) |> 
@@ -77,10 +80,10 @@ for(i in 1:length(RDS.github)) {
                     cache = FALSE,
                     quiet = TRUE) |> 
           mutate(block_no = BLOCK_NO) |>
-          mutate(PREFECTURE = Area.li$Area_en[i])) |> 
+          mutate(PREFECTURE = Area)) |> 
     bind_rows()
   
-  Rds.name <- paste0("JMA_",  Area.li$Area_en[i],
+  Rds.name <- paste0("JMA_",  Area,
                      "_", Year, Month, ".rds")
   saveRDS(bind_rows(df.org, df), 
           file = here(LOCAL_repo, Rds.name))
