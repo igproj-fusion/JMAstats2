@@ -83,7 +83,7 @@ ANOM <- df.org |>
   group_by(Month) |> 
   mutate(mavg5 = slide_vec(Anomaly, .f = mean, .before = 4)) |> 
   mutate(mavg5 = lead(mavg5, 2)) |> 
-  mutate(mavg5 = ifelse(Year < 1890, NA, mavg5))
+  mutate(mavg5 = ifelse(Year < 1900, NA, mavg5))
   
 
 ########################################
@@ -100,10 +100,12 @@ Trend <- ANOM |>
 # 月を指定してプロット
 ########################################
 
-MONTH = 12
+MONTH = 2
+ANOM.mon <- ANOM |> filter(Month == MONTH)
+BREAKS <- c(1898, seq(1910, 2010, 10), max(ANOM.mon$Year))
+TITLE <- paste0(month.name[MONTH], ": Average Temperature Anomaly")
 
-
-ggplot(ANOM |> filter(Month == MONTH), aes(Year, Anomaly)) +
+ggplot(ANOM.mon, aes(Year, Anomaly)) +
   geom_hline(yintercept = 0, color = "gray95") +
   geom_line(color = "gray80", linewidth = 0.5) +
   geom_point(color = "gray80", size = 2.2) +
@@ -111,18 +113,19 @@ ggplot(ANOM |> filter(Month == MONTH), aes(Year, Anomaly)) +
   geom_smooth(method = lm, se = FALSE, color = "red") +
   guides(x = guide_axis(minor.ticks = FALSE, cap = "both"),
          y = guide_axis(minor.ticks = TRUE, cap = "both")) +
-  scale_x_continuous(breaks = c(1898, seq(1910, 2010, 10), 2024)) +
+  scale_x_continuous(breaks = BREAKS) +
   annotate("text", x = 1915, y = 3.5, 
            label = paste("Trend ＝", Trend$coef[MONTH], "(°C/100years)"), 
-           color = "gray90", size = 4.5) +
+           color = "gray90", size = 4.25) +
   ylim(c(-4, 4)) +
   theme_hc(style = "darkunica") +
   labs(x = "", y = "Anomaly (°Celsius)",
-       title = paste0("Average Temperature Anomaly of ", month.name[MONTH])) + 
+       title = TITLE) + 
   theme(plot.margin= unit(c(1, 1, 1, 1), "lines"),
         plot.title = element_text(size = rel(1.2)),
         axis.title.y = element_text(size = rel(1.1), color = "gray90"),
-        axis.text  = element_text(color = "gray90"),
+        axis.text  = element_text(size = rel(0.95),
+                                  color = "gray90"),
         axis.line = element_line(color = "gray"), 
         axis.ticks = element_line(color = "gray"))
 

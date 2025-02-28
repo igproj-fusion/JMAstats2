@@ -60,7 +60,7 @@ if(Month == 12){
 }
 Month <- formatC(Month, width = 2, flag = "0")
 
-for(i in 1:length(RDS.github)) {
+for(i in 1:nrow(RDS.github)) {
   
   df.org <- readRDS(url(RDS.github$url[i], method = "libcurl"))
   
