@@ -100,10 +100,10 @@ Trend <- ANOM |>
 # 月を指定してプロット
 ########################################
 
-MONTH = 2
+MONTH = 3
 ANOM.mon <- ANOM |> filter(Month == MONTH)
 BREAKS <- c(1898, seq(1910, 2010, 10), max(ANOM.mon$Year))
-TITLE <- paste0(month.name[MONTH], ": Average Temperature Anomaly")
+TITLE <- paste0("Average Temperature Anomaly: ", month.name[MONTH])
 
 ggplot(ANOM.mon, aes(Year, Anomaly)) +
   geom_hline(yintercept = 0, color = "gray95") +
