@@ -10,9 +10,9 @@
 pacman::p_load(
   tidyverse,
   janitor,
-  ggthemes,
   slider,
-  supportR)
+  supportR,
+  jmastats)
 
 
 
@@ -24,16 +24,36 @@ pacman::p_load(
 #
 ########################################
 
-GITHUB.raw <- "https://raw.githubusercontent.com/igproj-fusion/JMAstats2/main/data/rds_update/"
-RDS.github <- github_ls(repo = "https://github.com/igproj-fusion/JMAstats2", 
-                        recursive = TRUE, quiet = FALSE) |> 
-  filter(path == "./data/rds_update") |> 
-  mutate(name = paste0(GITHUB.raw, name)) |> 
-  pull(name)
-
 STATION <- c("47409", "47420", "47421", "47588", "47592",
              "47606", "47637", "47648", "47742", "47755",
              "47761", "47830", "47890", "47909", "47918")
+
+
+GITHUB.raw01 <- "https://raw.githubusercontent.com/igproj-fusion/JMAstats2/"
+GITHUB.raw02 <- "main/data/rds_update/"
+GITHUB.area <- "refs/heads/main/data/Area_list.csv"
+
+Area.jp <- stations |> 
+  filter(block_no %in% STATION) |>
+  distinct(block_no, .keep_all = TRUE) |> 
+  pull(area)
+
+area15 <- read.csv(paste0(GITHUB.raw01, GITHUB.area)) |> 
+  filter(Area_jp %in% Area.jp) |> 
+  pull(Area_en)
+
+
+RDS.github <- github_ls(repo = "https://github.com/igproj-fusion/JMAstats2", 
+          recursive = TRUE, quiet = FALSE) |> 
+  filter(path == "./data/rds_update") |> 
+  mutate(url = paste0(GITHUB.raw01, GITHUB.raw02, name)) |> 
+  mutate(name2 = gsub("JMA_", "", name)) |> 
+  separate(col = name2,
+           into = c("area", "other"),
+           sep = "_") |> 
+  filter(area %in% area15) |> 
+  pull(url)
+
 
 df.org <- set_names(RDS.github) |>
   map(\(RDS) {
@@ -116,6 +136,20 @@ jma.df <- read.csv(Ann.JMA, fileEncoding = "cp932") |>
 # プロット
 ########################################
 
+YearMonth <- RDS.github[1] |> 
+  as_tibble() |> 
+  mutate(value = gsub(paste0(GITHUB.raw01, GITHUB.raw02, "JMA_"), 
+                      "", value)) |> 
+  mutate(value = gsub("\\.rds", "", value)) |> 
+  separate(col = value,
+           into = c("area", "YearMonth"),
+           sep = "_") |> 
+  pull(YearMonth)
+
+Last.Year <- substr(YearMonth, 1, 4)
+Last.Month <- month.abb[as.integer(substr(YearMonth, 5, 6))] 
+Last.YM <- paste(Last.Month, Last.Year)
+
 ggplot(ANOM) +
   geom_hline(yintercept = 0, color = "gray65") +
 #  geom_line(aes(date, anom),
@@ -166,7 +200,7 @@ ggplot(ANOM) +
   scale_y_continuous(breaks = seq(-2, 1.5, 0.5),
                      limits = c(-2, 1.5)) +
   labs(x = "", y = "Temperature Anomaly (°C)", color = "",
-       subtitle = "Jan 1898 ~ Apr 2025",
+       subtitle = paste0("Jan 1898 ~ ", Last.YM),
        caption = "SOURCE: https://www.data.jma.go.jp/stats/etrn/index.php",
        title = "Monthly Mean Temperature Anomaly in Japan") +
   theme_light() +

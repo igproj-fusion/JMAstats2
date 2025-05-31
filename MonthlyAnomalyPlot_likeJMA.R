@@ -100,7 +100,7 @@ Trend <- ANOM |>
 # 月を指定してプロット
 ########################################
 
-MONTH = 3
+MONTH = 4
 ANOM.mon <- ANOM |> filter(Month == MONTH)
 BREAKS <- c(1898, seq(1910, 2010, 10), max(ANOM.mon$Year))
 TITLE <- paste0("Average Temperature Anomaly: ", month.name[MONTH])
