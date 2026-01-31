@@ -35,7 +35,7 @@ GITHUB.raw = "https://raw.githubusercontent.com/igproj-fusion/"
 GITHUB.repo = "JMAstats2/main/data/rds_update/"
 
 
-RDS.github <- github_ls(repo = "https://github.com/igproj-fusion/JMAstats2", 
+RDS.github <- github_ls(repo = "igproj-fusion/JMAstats2", 
                         recursive = TRUE, quiet = FALSE) |> 
   filter(path == "./data/rds_update") |> 
   mutate(url = paste0(GITHUB.raw, GITHUB.repo, name)) |> 
