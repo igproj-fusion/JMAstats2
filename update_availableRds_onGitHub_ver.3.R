@@ -20,7 +20,7 @@ pacman::p_load(
   here,
   tools,
   stringi,
-  bazar,
+  #bazar,
   supportR)
 
 
