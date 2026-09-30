@@ -34,7 +34,7 @@ round2 = function(x, d = 0) {
 ########################################
 
 GITHUB.raw <- "https://raw.githubusercontent.com/igproj-fusion/JMAstats2/main/data/rds_update/"
-RDS.github <- github_ls(repo = "https://github.com/igproj-fusion/JMAstats2", 
+RDS.github <- github_ls(repo = "igproj-fusion/JMAstats2", 
                         recursive = TRUE, quiet = FALSE) |> 
   filter(path == "./data/rds_update") |> 
   mutate(name = paste0(GITHUB.raw, name)) |> 
@@ -100,7 +100,7 @@ Trend <- ANOM |>
 # 月を指定してプロット
 ########################################
 
-MONTH = 4
+MONTH = 8
 ANOM.mon <- ANOM |> filter(Month == MONTH)
 BREAKS <- c(1898, seq(1910, 2010, 10), max(ANOM.mon$Year))
 TITLE <- paste0("Average Temperature Anomaly: ", month.name[MONTH])
@@ -129,3 +129,10 @@ ggplot(ANOM.mon, aes(Year, Anomaly)) +
         axis.line = element_line(color = "gray"), 
         axis.ticks = element_line(color = "gray"))
 
+
+
+ggplot() +
+  geom_line(data = ANOM.mon, 
+            aes(Year, Anomaly, color = "1")) +
+  geom_line(data = df.org |> filter(Month == 8), 
+            aes(Year, anom, color = "2"))
